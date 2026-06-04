@@ -1,65 +1,56 @@
-<script>
-  import { UserRound, CalendarCheck } from 'lucide-svelte';
+<script lang="ts">
+  import { UserRound, CalendarCheck, Eye, EyeOff } from 'lucide-svelte';
   import { goto } from '$app/navigation';
-  import { checkUserExists } from '$lib/api/user';
-  import { signupUser } from '$lib/api/user';
-  import { Eye, EyeOff } from 'lucide-svelte'; 
+  import { checkUserExists, signupUser } from '$lib/api/user';
 
   let userId = '';
   let password = '';
   let confirmPassword = '';
+  let lastCheckedUserId = '';
 
-  let duplicateStatus = null;
+  let duplicateStatus: 'available' | 'unavailable' | null = null;
   let passwordError = false;
   let passwordMismatch = false;
   let passwordTouched = false;
   let showModal = false;
-  let missingField = null;
+  let missingField: 'userId' | 'password' | 'confirmPassword' | null = null;
   let modalMessage = '';
 
-  let userIdInput;
-  let passwordInput;
-  let confirmPasswordInput;
+  let userIdInput: HTMLInputElement | null = null;
+  let passwordInput: HTMLInputElement | null = null;
+  let confirmPasswordInput: HTMLInputElement | null = null;
 
   let flashMessage = false;
-
   let showPassword = false;       
   let showConfirmPassword = false;
 
-async function checkDuplicate() {
-  if (!userId.trim()) return;
+  async function checkDuplicate() {
+    if (!userId.trim()) return;
 
-  try {
-    const exists = await checkUserExists(userId);
-    const newStatus = exists ? 'unavailable' : 'available';
+    try {
+      const exists = await checkUserExists(userId);
+      const newStatus = exists ? 'unavailable' : 'available';
 
-    if (duplicateStatus !== newStatus) {
       flashMessage = true;
       duplicateStatus = null;
-      setTimeout(() => {
-        duplicateStatus = newStatus;
-        flashMessage = false;
-      }, 50); // 깜빡임 효과용 짧은 지연
-    } else {
-      // 동일한 상태일 경우에도 효과 주기
-      flashMessage = true;
-      duplicateStatus = null;
+      lastCheckedUserId = userId.trim();
       setTimeout(() => {
         duplicateStatus = newStatus;
         flashMessage = false;
       }, 50);
+
+    } catch (e: unknown) {
+      modalMessage = e instanceof Error ? e.message : '중복 확인 중 오류가 발생했습니다.';
+      showModal = true;
     }
-
-  } catch (e) {
-    modalMessage = e.message || '중복 확인 중 오류가 발생했습니다.';
-    showModal = true;
   }
-}
 
-
-  function validatePassword(pw) {
-    return /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/.test(pw);
-  }
+  const validatePassword = (function createPasswordValidator() {
+    const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+    return function (pw: string) {
+      return regex.test(pw);
+    };
+  })();
 
   function handlePasswordInput() {
     passwordTouched = true;
@@ -86,6 +77,13 @@ async function checkDuplicate() {
       return;
     }
 
+    if (duplicateStatus !== 'available' || lastCheckedUserId !== userId.trim()) {
+      modalMessage = '아이디 중복 확인을 해주세요.';
+      missingField = 'userId';
+      showModal = true;
+      return;
+    }
+
     if (!confirmPassword) {
       missingField = 'confirmPassword';
       modalMessage = '비밀번호 확인은 필수 입력 사항입니다.';
@@ -93,26 +91,10 @@ async function checkDuplicate() {
       return;
     }
 
-    // ✅ 비밀번호 유효성 검사 추가
     if (password !== confirmPassword) {
       passwordMismatch = true;
       modalMessage = '비밀번호가 일치하지 않습니다. 다시 확인해주세요.';
       showModal = true;
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      passwordMismatch = true;
-
-      // ✅ 모달로 사용자에게 알림
-      modalMessage = '비밀번호가 일치하지 않습니다. 다시 확인해주세요.';
-      showModal = true;
-
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      passwordMismatch = true;
       return;
     }
 
@@ -120,26 +102,26 @@ async function checkDuplicate() {
       await signupUser({ userId: userId.trim(), password: password.trim() });
       alert('가입이 완료되었습니다!');
       goto('/');
-    } catch (e) {
-      modalMessage = e.message;
+    } catch (e: unknown) {
+      modalMessage = e instanceof Error ? e.message : '회원가입 중 오류가 발생했습니다.';
       showModal = true;
     }
   }
 
-
-
   function handleModalConfirm() {
     showModal = false;
-    if (missingField === 'userId') userIdInput.focus();
-    else if (missingField === 'password') passwordInput.focus();
-    else if (missingField === 'confirmPassword') confirmPasswordInput.focus();
+    if (missingField === 'userId') userIdInput?.focus();
+    else if (missingField === 'password') passwordInput?.focus();
+    else if (missingField === 'confirmPassword') confirmPasswordInput?.focus();
     missingField = null;
   }
 
-  function handleKeydown(event) {
+  function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter') handleSignup();
   }
 </script>
+
+
 
 <style>
   .wrapper {

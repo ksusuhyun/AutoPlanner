@@ -1,44 +1,27 @@
-import { eachDayOfInterval, format } from 'date-fns';
+import { eachDayOfInterval, format, parseISO } from 'date-fns';
 
-interface Subject {
-  subject: string;
-  startDate: string;
-  endDate: string;
-}
+const dayMap: Record<string, number> = {
+  '일': 0, '월': 1, '화': 2, '수': 3, '목': 4, '금': 5, '토': 6,
+};
 
-export function getAllStudyDates(subjects: Subject[], studyDays: string[]): string[] {
-  const dayMap: Record<string, number> = {
-    '일': 0, '월': 1, '화': 2, '수': 3, '목': 4, '금': 5, '토': 6,
-  };
-
-  console.log('📋 받은 studyDays:', studyDays);
-  const allowed = studyDays.map(day => dayMap[day]).filter(d => d !== undefined);
-  console.log('✅ 매핑된 요일 숫자:', allowed);
-
-  const allDates: Set<string> = new Set();
-
-  for (const subj of subjects) {
-    console.log('📅 과목 기간:', subj.subject, subj.startDate, '→', subj.endDate);
+export function getValidStudyDates(
+  start: string,
+  end: string,
+  studyDays: string[],
+): string[] {
+  try {
+    const studyDayNumbers = studyDays.map(day => dayMap[day]).filter(num => num !== undefined);
     
-    const interval = eachDayOfInterval({
-      start: new Date(subj.startDate),
-      end: new Date(subj.endDate),
+    const allDates = eachDayOfInterval({
+      start: parseISO(start),
+      end: parseISO(end),
     });
 
-    for (const d of interval) {
-      const dayOfWeek = d.getDay();
-      if (allowed.includes(dayOfWeek)) {
-        const formatted = format(d, 'yyyy-MM-dd'); // 날짜 포맷을 yyyy-MM-dd로 통일
-        allDates.add(formatted);
-        console.log('📆 추가된 날짜:', formatted, '요일:', dayOfWeek);
-      }
-    }
+    return allDates
+      .filter(date => studyDayNumbers.includes(date.getDay()))
+      .map(date => format(date, 'M/d'));
+  } catch (error) {
+    console.error('날짜 생성 오류:', error);
+    return [];
   }
-
-  const sorted = Array.from(allDates).sort((a, b) => {
-    return new Date(a).getTime() - new Date(b).getTime();
-  });
-
-  console.log('✅ 전체 학습 가능 날짜:', sorted);
-  return sorted;
 }

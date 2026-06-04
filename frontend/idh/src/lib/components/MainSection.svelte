@@ -1,9 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { saveUserPreference, getUserPreference } from '$lib/api/userPreference';
+  import { user } from '$lib/stores/user';
+  import { get } from 'svelte/store';
+  import { goto } from '$app/navigation';
 
   let userId = '';
   let learningStyle: 'focus' | 'parallel' = 'focus';
+  type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
   let studyDays: { [key: string]: boolean } = {
     mon: false, tue: false, wed: false,
     thu: false, fri: false, sat: false, sun: false,
@@ -12,25 +16,25 @@
 
   // ✅ 초기화 시, 로그인 정보 확인 + 기존 설정 로딩
   onMount(async () => {
-    const storedId = localStorage.getItem('userId');
-    if (!storedId) {
+    const currentUser = get(user);
+    if (!currentUser?.userId) {
       alert('로그인이 필요합니다.');
       window.location.href = '/';
       return;
     }
-    userId = storedId;
+    userId = currentUser.userId;
 
     try {
-      const res = await getUserPreference(userId);
+      const res = await getUserPreference();
 
       // ✅ 기존 설정 반영
       if (res) {
         learningStyle = res.style === 'focus' ? 'focus' : 'parallel';
 
         // 요일은 문자열 배열 → 객체로 다시 매핑
-        for (const key in studyDays) {
+        (Object.keys(studyDays) as DayKey[]).forEach((key) => {
           studyDays[key] = res.studyDays.includes(convertDayKeyToKor(key));
-        }
+        });
 
         studySessions = res.sessionsPerDay;
       }
@@ -46,8 +50,11 @@
   });
 
   // 영어 요일 key → 한글 변환 함수
-  function convertDayKeyToKor(key: string): string {
-    const map = { mon: '월', tue: '화', wed: '수', thu: '목', fri: '금', sat: '토', sun: '일' };
+  function convertDayKeyToKor(key: DayKey): string {
+    const map: Record<DayKey, string> = {
+      mon: '월', tue: '화', wed: '수',
+      thu: '목', fri: '금', sat: '토', sun: '일',
+    };
     return map[key];
   }
 
@@ -56,7 +63,7 @@
   }
 
   async function handleSubmit() {
-    const selectedDays = Object.entries(studyDays)
+    const selectedDays = (Object.entries(studyDays) as [DayKey, boolean][])
       .filter(([_, selected]) => selected)
       .map(([key]) => convertDayKeyToKor(key));
 
@@ -67,9 +74,9 @@
     };
 
     try {
-      await saveUserPreference(userId, body);
+      await saveUserPreference(body);
       alert('✅ 설정이 저장되었습니다!');
-      window.location.href = '/userinfo';
+      await goto('/userinfo');
     } catch (err) {
       console.error(err);
       alert('⚠️ 설정 저장 실패!');
@@ -83,7 +90,7 @@
     <div class="profile-header">
       <div class="avatar-placeholder"></div>
       <div class="user-info">
-        <p class="user-email">{userId}@email.com</p>
+        <p class="user-email">{userId}</p>
         <p class="manage-settings-text">학습 설정 관리</p>
       </div>
     </div>
@@ -126,7 +133,7 @@
         </div>
       </div>
 
-      <button type="submit" class="save-button" on:click={handleSubmit}>설정 저장</button>
+      <button type="submit" class="save-button">설정 저장</button>
     </form>
   </div>
 </section>

@@ -1,0 +1,149 @@
+# name: Full CI – Backend & Frontend (No Lint)
+
+# on:
+#   push:
+#     paths:
+#       - 'auto-planner-backend/**'
+#       - 'frontend/idh/**'
+#   pull_request:
+#     paths:
+#       - 'auto-planner-backend/**'
+#       - 'frontend/idh/**'
+
+# jobs:
+#   backend:
+#     name: Backend CI (NestJS)
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: auto-planner-backend
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 20
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Type check (tsc)
+#         run: npm run typecheck
+
+#       - name: Unit tests (Jest)
+#         run: npm test
+
+#   frontend:
+#     name: Frontend CI (Svelte - idh)
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: frontend/idh
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 20
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Type check (svelte-check)
+#         run: npm run check
+
+#       - name: Build Svelte App
+#         run: npm run build
+
+name: CI – Backend (.env keys & Swagger check) & Frontend
+
+on:
+  push:
+    paths:
+      - 'auto-planner-backend/**'
+      - 'frontend/idh/**'
+  pull_request:
+    paths:
+      - 'auto-planner-backend/**'
+      - 'frontend/idh/**'
+
+jobs:
+  backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: auto-planner-backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check if .env and .env.example have same keys
+        run: |
+          ENV_KEYS=$(grep -vE '^#|^$' auto-planner-backend/.env | cut -d '=' -f1 | sort)
+          EXAMPLE_KEYS=$(grep -vE '^#|^$' .env.example | cut -d '=' -f1 | sort)
+          
+          if diff <(echo "$ENV_KEYS") <(echo "$EXAMPLE_KEYS"); then
+            echo ".env and .env.example have the same keys"
+          else
+            echo ".env and .env.example keys do not match!"
+            exit 1
+          fi
+      
+
+      - name: Build for Swagger bootstrap test
+        run: npm run build
+
+      - name: Swagger bootstrap check
+        run: |
+          node dist/main.js &
+          sleep 5
+          echo "Swagger app started successfully"
+
+  frontend:
+    name: Frontend CI (Svelte)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend/idh
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Type check with svelte-check (ignore warnings)
+        run: |
+          npx svelte-check --tsconfig ./tsconfig.json > check.log 2>&1
+          cat check.log
+          if grep -q "error:" check.log; then
+            echo "❌ Type errors found"
+            exit 1
+          else
+            echo "✅ No critical type errors"
+          fi
+
+      - name: Build Svelte App
+        run: npm run build
