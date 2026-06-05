@@ -6,9 +6,12 @@ https://github.com/user-attachments/assets/51441379-0184-4c44-b2c1-d08a0d144525
 
 AutoPlanner는 LLM이 사용자 맞춤 학습 계획을 자동으로 생성하고 Notion Calendar에 연동해주는 서비스입니다.
 
-- 회원가입 후 집중형/분산형, 학습 요일 등 공부 성향 설정
-- 과목명, 마감일, 챕터별 난이도와 분량을 입력하면 LLM이 날짜별 학습 계획 자동 생성
-- 생성된 계획을 버튼 하나로 Notion Calendar에 동기화
+1. 회원가입 후 집중형/분산형, 학습 요일 등 공부 성향 설정
+2. 과목명, 마감일, 챕터별 난이도와 분량을 입력하면 LLM이 날짜별 학습 계획 자동 생성
+3. 생성된 계획을 버튼 하나로 Notion Calendar에 동기화
+
+## 시스템 아키텍처
+![시스템 아키텍처](img/architecture.png)
 
 ## 설치 및 실행
 ### Backend
