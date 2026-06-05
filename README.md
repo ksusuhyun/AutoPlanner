@@ -3,6 +3,10 @@ https://github.com/user-attachments/assets/51441379-0184-4c44-b2c1-d08a0d144525
 ## 프로젝트 소개
 
 **AutoPlanner**는 LLM이 사용자 맞춤 학습 계획을 자동으로 생성하고 Notion Calendar에 연동해주는 서비스입니다.
+
+#### 개발 환경
+<img src="https://img.shields.io/badge/Frontend-Svelte-FF3E00" alt="Frontend Badge"/> <img src="https://img.shields.io/badge/Backend-NestJS%20%26%20Swagger-E0234E" alt="Backend Badge"/> <img src="https://img.shields.io/badge/Database-PostgreSQL%20%26%20Prisma-4169E1" alt="DB Badge"/> <img src="https://img.shields.io/badge/LLM-Llama_3.3-blueviolet" alt="LLM Badge"/> <img src="https://img.shields.io/badge/Integration-Notion_API-000000" alt="Notion Badge"/>
+
 #### 주요 기능
 1. 회원가입 후 집중형/분산형, 학습 요일 등 공부 성향 설정
 2. 과목명, 마감일, 챕터별 난이도와 분량을 입력하면 LLM이 날짜별 학습 계획 자동 생성
@@ -10,9 +14,6 @@ https://github.com/user-attachments/assets/51441379-0184-4c44-b2c1-d08a0d144525
 
 #### 구조
 자세한 구조는 [function-document.md](function-document.md)를 참고하세요.
-
-#### 개발 환경 및 언어
-<img src="https://img.shields.io/badge/Frontend-Svelte-FF3E00" alt="Frontend Badge"/> <img src="https://img.shields.io/badge/Backend-NestJS%20%26%20Swagger-E0234E" alt="Backend Badge"/> <img src="https://img.shields.io/badge/Database-PostgreSQL%20%26%20Prisma-4169E1" alt="DB Badge"/> <img src="https://img.shields.io/badge/LLM-Llama_3.3-blueviolet" alt="LLM Badge"/> <img src="https://img.shields.io/badge/Integration-Notion_API-000000" alt="Notion Badge"/>
 
 ## 시스템 아키텍처
 ![시스템 아키텍처](img/architecture.png)
