@@ -12,9 +12,6 @@ https://github.com/user-attachments/assets/51441379-0184-4c44-b2c1-d08a0d144525
 2. 과목명, 마감일, 챕터별 난이도와 분량을 입력하면 LLM이 날짜별 학습 계획 자동 생성
 3. 생성된 계획을 버튼 하나로 Notion Calendar에 동기화
 
-#### 구조
-자세한 구조는 [function-document.md](function-document.md)를 참고하세요.
-
 ## 시스템 아키텍처
 ![시스템 아키텍처](img/architecture.png)
 
@@ -40,3 +37,5 @@ cd advanced-programming/frontend/idh
 npm install
 npm run dev
 ```
+
+자세한 구조는 [function-document.md](function-document.md)를 참고하세요.
