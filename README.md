@@ -1,11 +1,6 @@
 # AutoPlanner
 
-<img src="https://img.shields.io/badge/Frontend-Svelte-FF3E00" alt="Frontend Badge"/>
-<img src="https://img.shields.io/badge/Backend-NestJS%20%26%20Swagger-E0234E" alt="Backend Badge"/>
-<img src="https://img.shields.io/badge/Database-PostgreSQL%20%26%20Prisma-4169E1" alt="DB Badge"/>
-<img src="https://img.shields.io/badge/Auth-JWT-000000" alt="Auth Badge"/>
-<img src="https://img.shields.io/badge/LLM-Llama_3.3_70B-blueviolet" alt="LLM Badge"/>
-<img src="https://img.shields.io/badge/Integration-Notion_API-000000" alt="Notion Badge"/>
+<img src="https://img.shields.io/badge/Frontend-Svelte-FF3E00" alt="Frontend Badge"/> <img src="https://img.shields.io/badge/Backend-NestJS%20%26%20Swagger-E0234E" alt="Backend Badge"/> <img src="https://img.shields.io/badge/Database-PostgreSQL%20%26%20Prisma-4169E1" alt="DB Badge"/> <img src="https://img.shields.io/badge/LLM-Llama_3.3-blueviolet" alt="LLM Badge"/> <img src="https://img.shields.io/badge/Integration-Notion_API-000000" alt="Notion Badge"/>
 
 > LLM 기반 개인 맞춤형 학습 계획표 생성 서비스
 
