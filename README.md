@@ -4,7 +4,7 @@ https://github.com/user-attachments/assets/51441379-0184-4c44-b2c1-d08a0d144525
 
 <img src="https://img.shields.io/badge/Frontend-Svelte-FF3E00" alt="Frontend Badge"/> <img src="https://img.shields.io/badge/Backend-NestJS%20%26%20Swagger-E0234E" alt="Backend Badge"/> <img src="https://img.shields.io/badge/Database-PostgreSQL%20%26%20Prisma-4169E1" alt="DB Badge"/> <img src="https://img.shields.io/badge/LLM-Llama_3.3-blueviolet" alt="LLM Badge"/> <img src="https://img.shields.io/badge/Integration-Notion_API-000000" alt="Notion Badge"/>
 
-AutoPlanner는 공부 성향과 시험 정보를 분석해 LLM이 최적의 학습 계획을 생성하고, Notion Calendar에 자동으로 연동해주는 서비스입니다.
+AutoPlanner는 LLM이 사용자 맞춤 학습 계획을 자동으로 생성하고 Notion Calendar에 연동해주는 서비스입니다.
 
 - 회원가입 후 집중형/분산형, 학습 요일 등 공부 성향 설정
 - 과목명, 마감일, 챕터별 난이도와 분량을 입력하면 LLM이 날짜별 학습 계획 자동 생성
