@@ -16,6 +16,14 @@ https://github.com/user-attachments/assets/51441379-0184-4c44-b2c1-d08a0d144525
 ![시스템 아키텍처](img/architecture.png)
 
 ## 설치 및 실행
+### Frontend
+```bash
+cd advanced-programming/frontend/idh
+
+npm install
+npm run dev
+```
+
 ### Backend
 ```bash
 git clone [repository-url]
@@ -28,14 +36,6 @@ cp .env.example .env
 
 npx prisma migrate dev
 npm run start:dev
-```
-
-### Frontend
-```bash
-cd advanced-programming/frontend/idh
-
-npm install
-npm run dev
 ```
 
 자세한 구조는 [function-document.md](function-document.md)를 참고하세요.
